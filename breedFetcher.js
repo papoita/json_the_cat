@@ -12,24 +12,23 @@
 
 const request = require("request");
 
-const urlInput = `https://api.thecatapi.com/v1/breeds/search?q=${process.argv[2]}`; //sib for siberian
-//https://api.thecatapi.com/v1/breeds/search?q=sib
-//if user inputs siberian instead of sib then the process.argv.slice(0,4);
-const path = process.argv[3];
-const breedName = process.argv[2];
+//const breedName = process.argv[2];
 
-const fetchBreedDescription = function (breedName, callback) {
-	request(urlInput, (error, response, body) => {
-		if (error) {
-			callback(error, response.statusCode);
-		}
-		const data = JSON.parse(body);
+const fetchBreedDescription = function(breedName, callback) {
+  request(
+    `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`,
+    (error, response, body) => {
+      if (error) {
+        callback(error, response.statusCode);
+      }
+      const data = JSON.parse(body);
 
-		if (data[0]) {
-			callback(null, data[0].description);
-		} else {
-			callback(null, `cat breed: ${breedName} not found`);
-		}
-	});
+      if (data[0]) {
+        callback(null, data[0].description);
+      } else {
+        callback(null, `cat breed: ${breedName} not found`);
+      }
+    }
+  );
 };
 module.exports = { fetchBreedDescription };
