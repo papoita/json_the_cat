@@ -1,6 +1,6 @@
 /** @format */
 /**
- * @TODO handle errors
+ * @TODO handle errors with callbacks request support from mentor
  */
 
 // 20211120001403
@@ -11,29 +11,25 @@
 // e.g headers[“x-api-key”] = "ABC123"
 
 const request = require("request");
-const fs = require("fs");
+
 const urlInput = `https://api.thecatapi.com/v1/breeds/search?q=${process.argv[2]}`; //sib for siberian
 //https://api.thecatapi.com/v1/breeds/search?q=sib
 //if user inputs siberian instead of sib then the process.argv.slice(0,4);
 const path = process.argv[3];
+const breedName = process.argv[2];
 
-request(urlInput, (error, response, body) => {
-  console.log("error:", error);
-  // Print the error if one occurred
-  console.log("statusCode:", response && response.statusCode); // Print the response status code if a response was received
-  console.log("body:", body); // Print the HTML for the Google homepage.
-  const data = JSON.parse(body);
-  console.log(data);
-  console.log(typeof data);
-  if (data[0]) {
-    console.log(data[0].description);
-  } else {
-    console.log(`cat breed not found`);
-  }
-  if (!error) {
-    fs.writeFile(path, body, "utf8", request, (err) => {
-      console.log(`Downloaded and saved ${body.length} bytes to ${path}`);
-      if (err) throw err;
-    });
-  }
-});
+const fetchBreedDescription = function (breedName, callback) {
+	request(urlInput, (error, response, body) => {
+		if (error) {
+			callback(error, response.statusCode);
+		}
+		const data = JSON.parse(body);
+
+		if (data[0]) {
+			callback(null, data[0].description);
+		} else {
+			callback(null, `cat breed: ${breedName} not found`);
+		}
+	});
+};
+module.exports = { fetchBreedDescription };
