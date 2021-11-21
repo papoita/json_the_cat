@@ -14,21 +14,24 @@ const request = require("request");
 
 //const breedName = process.argv[2];
 
-const fetchBreedDescription = function(breedName, callback) {
-  request(
-    `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`,
-    (error, response, body) => {
-      if (error) {
-        callback(error, response.statusCode);
-      }
-      const data = JSON.parse(body);
+const fetchBreedDescription = function (breedName, callback) {
+	request(
+		`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`,
+		(error, response, body) => {
+			//console.log(response.statusCode);
+			if (error) {
+				callback(error, response.statusCode);
 
-      if (data[0]) {
-        callback(null, data[0].description);
-      } else {
-        callback(null, `cat breed: ${breedName} not found`);
-      }
-    }
-  );
+				return;
+			}
+			const data = JSON.parse(body);
+
+			if (data[0]) {
+				callback(null, data[0].description);
+			} else {
+				callback(null, `cat breed: ${breedName} not found`);
+			}
+		}
+	);
 };
 module.exports = { fetchBreedDescription };
